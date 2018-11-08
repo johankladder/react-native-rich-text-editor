@@ -1,31 +1,14 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import EntityControlButton from "./EntityControlButton";
+import MutableEntityButton from "./Buttons/MutableEntityButton";
 
 export default class RichTextEditorControlBar extends React.Component {
 
     state = {
         buttons: [
-            {
-                key: 'bold',
-                content: {
-                    title: 'B'
-                },
-                entityInfo: {
-                    openTag: '<b>',
-                    closeTag: '</b>'
-                }
-            },
-            {
-                key: 'cursive',
-                content: {
-                    title: 'C'
-                },
-                entityInfo: {
-                    openTag: '<i>',
-                    closeTag: '</i>'
-                }
-            }
+            new MutableEntityButton('B', '<b>', '</b>'),
+            new MutableEntityButton('C', '<i>', '</i>')
         ]
     };
 
@@ -42,18 +25,15 @@ export default class RichTextEditorControlBar extends React.Component {
     };
 
     _renderButton = (button) => {
-        let {key, content, entityInfo} = button;
-        let {title} = content;
         return (
             <EntityControlButton
-                entityInfo={entityInfo}
+                entityInfo={button.entityInfo}
                 onEntityControlButtonPressed={this._onEntityControlButtonPressed.bind(this)}
                 entityMapper={this.props.entityMapper}
                 currentSelection={this.props.currentSelection}
                 button={button}
-                key={key}
             >
-                {title}
+                {button.contentTitle}
             </EntityControlButton>
 
         )
