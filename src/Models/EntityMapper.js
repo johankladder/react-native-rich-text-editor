@@ -77,15 +77,18 @@ export default class EntityMapper extends Array {
     };
 
     /**
-     * Returns all the Entities that are wrapped around a certain start and end index.
+     * Returns all the Entities that are wrapped around a certain start and end index and matches the tags.
      *
      * @param start
      * @param end
+     * @param openTag
+     * @param closeTag
      * @return {T[]}
      */
-    wrappedAroundSelection = ({start, end}) => {
+    wrappedAroundSelection = ({start, end}, {openTag, closeTag}) => {
         return this.filter(entity => {
-            return entity.startIndex <= start && end < entity.endIndex
+            return (entity.startIndex <= start && end < entity.endIndex)
+                && (entity.openTag === openTag && entity.closeTag === closeTag)
         })
     };
 
@@ -93,11 +96,9 @@ export default class EntityMapper extends Array {
         let same = undefined;
         this.forEach((innerEntity) => {
             if (innerEntity.startIndex === entity.startIndex && innerEntity.endIndex === entity.endIndex) {
-                // TODO: Multi wrapper support
-                // if (innerEntity.openTag === entity.openTag && innerEntity.closeTag === entity.closeTag) {
-                //     same = innerEntity;
-                // }
-                same = innerEntity
+                if (innerEntity.openTag === entity.openTag && innerEntity.closeTag === entity.closeTag) {
+                    same = innerEntity;
+                }
             }
         });
         return same;

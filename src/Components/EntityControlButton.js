@@ -18,10 +18,12 @@ export default class EntityControlButton extends React.Component {
 
     componentDidMount() {
         this.selectionChangedEvent = DeviceEventEmitter.addListener('selectionChanged', this.onCurrentSelectionChange.bind(this))
+        this.resetModesEvent = DeviceEventEmitter.addListener('resetModes', this._resetModes.bind(this))
     };
 
     componentWillUnmount() {
         this.selectionChangedEvent.remove();
+        this.resetModesEvent.remove();
     }
 
     _resetModes = () => {
@@ -31,7 +33,7 @@ export default class EntityControlButton extends React.Component {
             updateMode: false,
             updateModeEntities: [],
         })
-    }
+    };
 
     /**
      * Function that gets called every time a user presses an controller button. It will also call a callback if
@@ -89,19 +91,6 @@ export default class EntityControlButton extends React.Component {
         if (this.state.insertionMode) {
             this._onSelectionChangeWhileInsertionModeIsOn(newSelection)
         }
-
-        this._removeEmptyEntitiesAndCheckModes(newSelection);
-    };
-
-    /**
-     * Function that tries to remove all the empty Entities. If so, it will reset
-     * all the modes. To ensure no editing happens when it was removed.
-     * @private
-     */
-    _removeEmptyEntitiesAndCheckModes = () => {
-        if (this.props.entityMapper.removeEmptyEntities().length) {
-            this._resetModes()
-        }
     };
 
     /**
@@ -125,7 +114,7 @@ export default class EntityControlButton extends React.Component {
      */
     _checkUpdateMode = (newSelection) => {
         if (!this.state.updateMode) {
-            let wrappedAroundEntities = this.props.entityMapper.wrappedAroundSelection(newSelection);
+            let wrappedAroundEntities = this.props.entityMapper.wrappedAroundSelection(newSelection, this.props.entityInfo);
             if (wrappedAroundEntities.length) {
                 this._toggleUpdateMode(newSelection, wrappedAroundEntities)
             }

@@ -79,10 +79,18 @@ export default class RichTextEditor extends React.Component {
     onSelectionIndexesChange = (newSelection) => {
         let {nativeEvent} = newSelection;
         let {selection} = nativeEvent;
+
         DeviceEventEmitter.emit('selectionChanged', selection);
+
+        if (this.state.entityMapper.removeEmptyEntities().length) {
+            DeviceEventEmitter.emit('resetModes');
+        }
+
         this.setState({
-            currentSelection: selection
-        })
+            currentSelection: selection,
+        });
+
+
     };
 
     _renderControlBar = () => {
@@ -112,7 +120,8 @@ export default class RichTextEditor extends React.Component {
                     >
                         {this.state.richText}
                     </TextInput>
-                    <HTMLView  style={[styles.htmlText, styles.textView]} value={'<div>' + this.state.richText + '</div>'}/>
+                    <HTMLView style={[styles.htmlText, styles.textView]}
+                              value={'<div>' + this.state.richText + '</div>'}/>
                     <TextInput
                         autoCorrect={!__DEV__}
                         onSelectionChange={this.onSelectionIndexesChange.bind(this)}

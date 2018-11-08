@@ -15,6 +15,16 @@ export default class RichTextEditorControlBar extends React.Component {
                     openTag: '<b>',
                     closeTag: '</b>'
                 }
+            },
+            {
+                key: 'cursive',
+                content: {
+                    title: 'C'
+                },
+                entityInfo: {
+                    openTag: '<i>',
+                    closeTag: '</i>'
+                }
             }
         ]
     };
@@ -32,10 +42,11 @@ export default class RichTextEditorControlBar extends React.Component {
     };
 
     _renderButton = (button) => {
-        let {key, content} = button;
+        let {key, content, entityInfo} = button;
         let {title} = content;
         return (
             <EntityControlButton
+                entityInfo={entityInfo}
                 onEntityControlButtonPressed={this._onEntityControlButtonPressed.bind(this)}
                 entityMapper={this.props.entityMapper}
                 currentSelection={this.props.currentSelection}
