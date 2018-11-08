@@ -12,7 +12,10 @@ export default class RichTextEditor extends React.Component {
         richText: '',   // Text with content-entities
         entityMapper: new EntityMapper(),
         entityApplier: new EntityApplier(),
-        currentSelection: null, // Currently selection -> Place of the caret
+        currentSelection: {
+            start: 0,
+            end: 0
+        }, // Currently selection -> Place of the caret
         showController: false,  // Show controller status -> Only when keyboard is open
     };
 
