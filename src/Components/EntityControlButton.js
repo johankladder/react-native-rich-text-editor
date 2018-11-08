@@ -93,6 +93,11 @@ export default class EntityControlButton extends React.Component {
         this._removeEmptyEntitiesAndCheckModes(newSelection);
     };
 
+    /**
+     * Function that tries to remove all the empty Entities. If so, it will reset
+     * all the modes. To ensure no editing happens when it was removed.
+     * @private
+     */
     _removeEmptyEntitiesAndCheckModes = () => {
         if (this.props.entityMapper.removeEmptyEntities().length) {
             this._resetModes()
