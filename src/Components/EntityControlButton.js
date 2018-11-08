@@ -24,6 +24,15 @@ export default class EntityControlButton extends React.Component {
         this.selectionChangedEvent.remove();
     }
 
+    _resetModes = () => {
+        this.setState({
+            insertionMode: false,
+            insertionModeEntity: null,
+            updateMode: false,
+            updateModeEntities: [],
+        })
+    }
+
     /**
      * Function that gets called every time a user presses an controller button. It will also call a callback if
      * the parent provided on.
@@ -78,7 +87,15 @@ export default class EntityControlButton extends React.Component {
         }
 
         if (this.state.insertionMode) {
-            return this._onSelectionChangeWhileInsertionModeIsOn(newSelection)
+            this._onSelectionChangeWhileInsertionModeIsOn(newSelection)
+        }
+
+        this._removeEmptyEntitiesAndCheckModes(newSelection);
+    };
+
+    _removeEmptyEntitiesAndCheckModes = () => {
+        if (this.props.entityMapper.removeEmptyEntities().length) {
+            this._resetModes()
         }
     };
 

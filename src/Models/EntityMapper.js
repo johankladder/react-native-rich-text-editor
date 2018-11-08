@@ -39,6 +39,20 @@ export default class EntityMapper extends Array {
     };
 
     /**
+     * Removes all the empty Entities from the set. This means that all the
+     * Entities that have the same startIndex as the endIndex are removed.
+     */
+    removeEmptyEntities = () => {
+        // Fixme: Double inner loop:
+        let entitiesReadyForRemoval = this.filter(entity => {
+            return entity.startIndex === entity.endIndex
+        });
+        entitiesReadyForRemoval.forEach(entity => this.removeEntity(entity));
+
+        return entitiesReadyForRemoval;
+    };
+
+    /**
      * Add's or deletes a Entity according if it is already in this set.
      *
      * @param entity
