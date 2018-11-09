@@ -16,11 +16,16 @@ export default class MutableEntityButton {
         this._entityInfo = value;
     }
 
-    constructor(contentTitle, openTag, closeTag) {
+    get image() {
+        return this._image;
+    }
+
+    constructor(contentTitle, openTag, closeTag, image) {
         this._entityInfo = {
             openTag: openTag,
             closeTag: closeTag,
-        }
+        };
         this._contentTitle = contentTitle;
+        this._image = image;
     }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Image, StyleSheet, View} from 'react-native';
 import EntityControlButton from "./EntityControlButton";
 import MutableEntityButton from "./Buttons/MutableEntityButton";
 import ImmutableEntityButton from "./Buttons/ImmutableEntityButton";
@@ -10,11 +10,12 @@ export default class RichTextEditorControlBar extends React.Component {
 
     state = {
         buttons: [
-            new MutableEntityButton('B', '<b>', '</b>'),
-            new MutableEntityButton('C', '<i>', '</i>'),
-            new ImmutableEntityButton('A', '<a>', '</a>', (possiblyEntity) => {
-                this._openLinkCreationField(possiblyEntity)
-            })
+            new MutableEntityButton('B', '<b>', '</b>', <Image source={require('../Images/ZSSbold.png')}/>),
+            new MutableEntityButton('C', '<i>', '</i>', <Image source={require('../Images/ZSSitalic.png')}/>),
+            new ImmutableEntityButton('A', '<a>', '</a>', <Image source={require('../Images/ZSSlink.png')}/>,
+                (possiblyEntity) => {
+                    this._openLinkCreationField(possiblyEntity)
+                })
         ],
     };
 
@@ -26,7 +27,6 @@ export default class RichTextEditorControlBar extends React.Component {
     };
 
     _addToMapperCloseAndRefresh = (possibleEntity, options, content) => {
-
         possibleEntity.options = options;
         possibleEntity.content = content;
         this.props.onContentNeedsToBeAdded(possibleEntity, content);
@@ -62,7 +62,7 @@ export default class RichTextEditorControlBar extends React.Component {
                     currentSelection={this.props.currentSelection}
                     button={button}
                 >
-                    {button.contentTitle}
+                    {button.image}
                 </EntityControlButton>
             </View>
 

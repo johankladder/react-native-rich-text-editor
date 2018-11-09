@@ -322,16 +322,6 @@ export default class EntityControlButton extends React.Component {
     };
 
     /**
-     * CAN BE OVERRIDDEN:
-     *
-     * Function that returns a React Component that will be displayed inside the TouchableOpacity of the button.
-     * @return {*}
-     */
-    renderInnerButtonComponent = () => {
-        return <Text>{this.props.children}</Text>
-    };
-
-    /**
      * @override
      */
     render() {
@@ -342,7 +332,7 @@ export default class EntityControlButton extends React.Component {
                     onPress={() => this._onPressControllerButton(this.props.button)}
 
                 >
-                    {this.renderInnerButtonComponent()}
+                    {this.props.children}
                 </TouchableOpacity>
             </EntityButton>
         )
@@ -356,9 +346,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     buttonActivatedStyle: {
-        backgroundColor: 'green'
+        backgroundColor: '#5ca1fc'
     },
     buttonStyle: {
-        backgroundColor: 'blue'
+
     }
 });

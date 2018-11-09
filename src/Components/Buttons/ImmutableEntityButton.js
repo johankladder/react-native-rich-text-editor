@@ -15,12 +15,17 @@ export default class ImmutableEntityButton {
         this._entityInfo = value;
     }
 
-    constructor(contentTitle, openTag, closeTag, onImmutableAction) {
+    get image() {
+        return this._image;
+    }
+
+    constructor(contentTitle, openTag, closeTag, image, onImmutableAction) {
         this._entityInfo = {
             openTag: openTag,
             closeTag: closeTag,
         };
         this._contentTitle = contentTitle;
-        this.onImmutableAction = onImmutableAction
+        this.onImmutableAction = onImmutableAction;
+        this._image = image;
     }
 }
