@@ -3,7 +3,7 @@ import {DeviceEventEmitter, Keyboard, KeyboardAvoidingView, StyleSheet, TextInpu
 import EntityMapper from "../Models/EntityMapper";
 import EntityApplier from "../Models/EntityApplier";
 import RichTextEditorControlBar from "./RichTextEditorControlBar";
-import HTMLView from "react-native-htmlview";
+import EntitiesToComponentConverter from "./Converter/EntitiesToComponentConverter";
 
 export default class RichTextEditor extends React.Component {
 
@@ -12,6 +12,7 @@ export default class RichTextEditor extends React.Component {
         richText: '',   // Text with content-entities
         entityMapper: new EntityMapper(),
         entityApplier: new EntityApplier(),
+        entitiesConverter: new EntitiesToComponentConverter(),
         currentSelection: {
             start: 0,
             end: 0
@@ -145,6 +146,18 @@ export default class RichTextEditor extends React.Component {
         }
     };
 
+    renderRichHtmlText = () => {
+        return (
+            <TextInput
+                multiline={true}
+                editable={false}
+                style={[styles.textView, styles.richText]}
+            >
+                {this._getFormattedRichText()}
+            </TextInput>
+        )
+    };
+
     /**
      * @override
      */
@@ -153,23 +166,18 @@ export default class RichTextEditor extends React.Component {
             <KeyboardAvoidingView keyboardVerticalOffset={25} style={styles.main} behavior={'position'} enabled>
                 {this.state.toShowEditorModal}
                 <View style={styles.inputArea}>
-                    <TextInput
-                        multiline={true}
-                        editable={false}
-                        style={[styles.textView, styles.richText]}
-                    >
-                        {this._getFormattedRichText()}
-                    </TextInput>
-                    <HTMLView style={[styles.htmlText, styles.textView]}
-                              value={this._getFormattedRichText()}/>
+                    {/*{this.renderRichHtmlText()}*/}
                     <TextInput
                         autoCorrect={!__DEV__}
                         onSelectionChange={this.onSelectionIndexesChange.bind(this)}
                         multiline={true}
                         style={[styles.textView, styles.textInput]}
-                        value={this.state.plainText}
                         onChangeText={this.onChangeText.bind(this)}
-                    />
+                    >
+                        {this.state.entitiesConverter.convertToTextComponents(
+                            this.state.plainText, this.state.entityMapper
+                        )}
+                    </TextInput>
                 </View>
                 {this._renderControlBar()}
 
@@ -187,13 +195,14 @@ const styles = StyleSheet.create({
     },
     textView: {
         width: '100%',
-        height: 100,
+        height: 200,
     },
     textInput: {
-        // TODO: Enable to place on top!
-        // position: 'absolute',
-        // opacity: 0,
-        backgroundColor: 'red',
+        backgroundColor: 'white',
+        borderWidth: 0.5,
+        borderRadius: 6,
+        borderColor: '#8C8D8E',
+        padding: 10,
     },
     richText: {
         backgroundColor: 'yellow'
