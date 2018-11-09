@@ -30,7 +30,7 @@ export default class EnterLinkModal extends React.Component {
         if (this._validate()) {
             this.props.onSubmit({
                 href: this.state.link
-            }, this.state.content)
+            }, this._getContent())
         } else {
             this.setState({
                 errorText: 'Please fill in a least the link field, or cancel'
