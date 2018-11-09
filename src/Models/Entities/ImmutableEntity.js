@@ -42,6 +42,10 @@ export default class ImmutableEntity extends Entity {
         )
     };
 
+    /**
+     * Returns the option string of this entity.
+     * @return {string}
+     */
     getOptionsString = () => {
         let optionsString = ' ';
         Object.keys(this.options).forEach(key => {

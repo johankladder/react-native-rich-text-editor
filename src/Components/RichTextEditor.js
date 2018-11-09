@@ -60,6 +60,11 @@ export default class RichTextEditor extends React.Component {
         })
     };
 
+    /**
+     * Function that is called whenever a modal needs to be showed for the editor. This modal can contain edit fields
+     * for i.e. Immutable Entities.
+     * @param modal
+     */
     onNeedToShowEditorModal = (modal) => {
         this.setState({
             toShowEditorModal: modal
@@ -100,10 +105,14 @@ export default class RichTextEditor extends React.Component {
         this.setState({
             currentSelection: selection,
         });
-
-
     };
 
+    /**
+     * Function for adding content at a certain position of the  current content
+     * @param startIndex
+     * @param endIndex
+     * @param content
+     */
     addContent = ({startIndex, endIndex}, content) => {
         let left = this.state.plainText.substr(0, startIndex);
         let right = this.state.plainText.substr(endIndex);
@@ -117,9 +126,9 @@ export default class RichTextEditor extends React.Component {
             let {entityMapper, currentSelection} = this.state;
             return (
                 <RichTextEditorControlBar
-                    onContentNeedsToBeAdded={this.addContent.bind(this)}
                     currentSelection={currentSelection}
                     entityMapper={entityMapper}
+                    onContentNeedsToBeAdded={this.addContent.bind(this)}
                     onEntityManipulated={this.updateRichText.bind(this)}
                     onNeedToShowEditorModal={this.onNeedToShowEditorModal.bind(this)}
                 />

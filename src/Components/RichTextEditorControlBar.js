@@ -21,6 +21,7 @@ export default class RichTextEditorControlBar extends React.Component {
     _openLinkCreationField = (possibleEntity) => {
         this.props.onNeedToShowEditorModal(<EnterLinkModal
             onSubmit={(options, content) => this._addToMapperCloseAndRefresh(possibleEntity, options, content)}
+            onCancel={() => this._hideEditorModal()}
         />)
     };
 
