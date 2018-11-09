@@ -2,14 +2,41 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import EntityControlButton from "./EntityControlButton";
 import MutableEntityButton from "./Buttons/MutableEntityButton";
+import ImmutableEntityButton from "./Buttons/ImmutableEntityButton";
+import EnterLinkModal from "./Modals/EnterLinkModal";
+
 
 export default class RichTextEditorControlBar extends React.Component {
 
     state = {
         buttons: [
             new MutableEntityButton('B', '<b>', '</b>'),
-            new MutableEntityButton('C', '<i>', '</i>')
-        ]
+            new MutableEntityButton('C', '<i>', '</i>'),
+            new ImmutableEntityButton('A', '<a>', '</a>', (possiblyEntity) => {
+                this._openLinkCreationField(possiblyEntity)
+            })
+        ],
+    };
+
+    _openLinkCreationField = (possibleEntity) => {
+        this.props.onNeedToShowEditorModal(<EnterLinkModal
+            onSubmit={(options, content) => this._addToMapperCloseAndRefresh(possibleEntity, options, content)}
+        />)
+    };
+
+    _addToMapperCloseAndRefresh = (possibleEntity, options, content) => {
+
+        possibleEntity.options = options;
+        possibleEntity.content = content;
+        this.props.onContentNeedsToBeAdded(possibleEntity, content);
+        possibleEntity.endIndex = possibleEntity.endIndex + content.length;
+        this.props.entityMapper.addEntity(possibleEntity);
+        this._onEntityManipulated();
+        this._hideEditorModal();
+    };
+
+    _hideEditorModal = () => {
+        this.props.onNeedToShowEditorModal(null)
     };
 
     _renderButtons = (buttons) => {
@@ -18,23 +45,25 @@ export default class RichTextEditorControlBar extends React.Component {
         })
     };
 
-    _onEntityControlButtonPressed = (button) => {
-        if (this.props.onControllerButtonPressed) {
-            this.props.onControllerButtonPressed(button)
+    _onEntityManipulated = () => {
+        if (this.props.onEntityManipulated) {
+            this.props.onEntityManipulated()
         }
     };
 
     _renderButton = (button) => {
         return (
-            <EntityControlButton
-                entityInfo={button.entityInfo}
-                onEntityControlButtonPressed={this._onEntityControlButtonPressed.bind(this)}
-                entityMapper={this.props.entityMapper}
-                currentSelection={this.props.currentSelection}
-                button={button}
-            >
-                {button.contentTitle}
-            </EntityControlButton>
+            <View>
+                <EntityControlButton
+                    entityInfo={button.entityInfo}
+                    onEntityControlButtonPressed={this._onEntityManipulated.bind(this)}
+                    entityMapper={this.props.entityMapper}
+                    currentSelection={this.props.currentSelection}
+                    button={button}
+                >
+                    {button.contentTitle}
+                </EntityControlButton>
+            </View>
 
         )
     };

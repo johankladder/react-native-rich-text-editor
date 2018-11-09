@@ -2,11 +2,19 @@ import React from 'react';
 import {DeviceEventEmitter, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import EntityButton from "./EntityButton";
 import Entity from "../Models/Entities/Entity";
+import MutableEntityButton from "./Buttons/MutableEntityButton";
+import ImmutableEntityButton from "./Buttons/ImmutableEntityButton";
+import MutableEntity from "../Models/Entities/MutableEntity";
+import ImmutableEntity from "../Models/Entities/ImmutableEntity";
 
 export default class EntityControlButton extends React.Component {
 
     // TODO: When more modes, please make this more dynamic by adding a mode property
     state = {
+
+        /**
+         * Mutable modes:
+         */
         // Insertion-Mode values:
         insertionMode: false,
         insertionModeEntity: null,
@@ -44,11 +52,9 @@ export default class EntityControlButton extends React.Component {
      */
     _onPressControllerButton = (button) => {
         if (this.props.currentSelection) {
-            let {entityInfo} = button;
-
             this._determineActionToPerform(
                 this.props.currentSelection,
-                entityInfo
+                button
             );
 
             if (this.props.onEntityControlButtonPressed) {
@@ -62,10 +68,20 @@ export default class EntityControlButton extends React.Component {
      * 'insertionAdd' (when the user didn't selected multiple content, so just presses the button).
      *
      * @param currentSelection
-     * @param entityInfo
+     * @param button
      * @private
      */
-    _determineActionToPerform = (currentSelection = {}, entityInfo = {}) => {
+    _determineActionToPerform = (currentSelection = {}, button) => {
+        let {entityInfo} = button;
+        if (button instanceof MutableEntityButton) {
+            this._determineMutableActions(currentSelection, entityInfo)
+        }
+        if (button instanceof ImmutableEntityButton) {
+            this._determineImmutableActions(currentSelection, entityInfo)
+        }
+    };
+
+    _determineMutableActions = (currentSelection = {}, entityInfo = {}) => {
         let possibleEntity = this._createEntityFromSelectionAndInfo(currentSelection, entityInfo);
         if (this.state.updateMode) {
             this._toggleUpdateMode();
@@ -73,6 +89,13 @@ export default class EntityControlButton extends React.Component {
             this._toggleAdd(possibleEntity)
         } else {
             this._toggleInsertionMode(possibleEntity)
+        }
+    };
+
+    _determineImmutableActions = (currentSelection = {}, entityInfo = {}) => {
+        let possibleEntity = this._createEntityFromSelectionAndInfo(currentSelection, entityInfo);
+        if(this.props.button.onImmutableAction) {
+            this.props.button.onImmutableAction(possibleEntity)
         }
     };
 
@@ -213,7 +236,7 @@ export default class EntityControlButton extends React.Component {
      */
     _onSelectionChangeWhileInsertionModeIsOn = (newSelection) => {
         // Create a new Entity with the new selection and base values:
-        let updatedEntity = this._createEntityFromSelectionAndInfo(newSelection, this.state.insertionModeEntity);
+        let updatedEntity = this._createEntityFromSelectionAndInfo(newSelection, this.state.insertionModeEntity, this.props.button);
 
         // Keep the start-index, as this is needed to ensure appending:
         updatedEntity.startIndex = this.state.insertionModeEntity.startIndex;
@@ -228,7 +251,7 @@ export default class EntityControlButton extends React.Component {
     _onSelectionChangeWhileUpdateModeIsOn = (newSelection, wrappedEntities) => {
         let updatedEntities = [];
         wrappedEntities.forEach((entity) => {
-            let updated = this._createEntityFromSelectionAndInfo(newSelection, entity);
+            let updated = this._createEntityFromSelectionAndInfo(newSelection, entity, this.props.button);
             updated.startIndex = entity.startIndex;
             this.props.entityMapper.updateEntity(entity, updated);
             updatedEntities.push(updated)
@@ -260,14 +283,30 @@ export default class EntityControlButton extends React.Component {
      *
      * @param selection
      * @param entityInfo
+     * @param button
      * @return {Entity}
      * @private
      */
     _createEntityFromSelectionAndInfo = (selection, entityInfo) => {
+        if (this.props.button instanceof MutableEntityButton) {
+            return this._createMutableEntityFromSelectionAndInfo(selection, entityInfo)
+        }
+        if (this.props.button instanceof ImmutableEntityButton) {
+            return this._createImmutableEntityFromSelectionAndInfo(selection, entityInfo)
+        }
+    };
+
+    _createMutableEntityFromSelectionAndInfo = (selection, entityInfo) => {
         let {start, end} = selection;
         let {openTag, closeTag} = entityInfo;
-        return new Entity(start, end, openTag, closeTag);
+        return new MutableEntity(start, end, openTag, closeTag);
     };
+
+    _createImmutableEntityFromSelectionAndInfo = (selection, entityInfo) => {
+        let {start, end} = selection;
+        let {openTag, closeTag, options} = entityInfo;
+        return new ImmutableEntity(start, end, openTag, options, closeTag)
+    }
 
     /**
      * CAN BE OVERRIDDEN:

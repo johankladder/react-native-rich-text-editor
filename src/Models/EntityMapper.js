@@ -1,4 +1,5 @@
 import Entity from "./Entities/Entity";
+import ImmutableEntity from "./Entities/ImmutableEntity";
 
 /**
  * The EntityMapper is actually a array that can contain Entities. It can also perform complex action
@@ -45,11 +46,22 @@ export default class EntityMapper extends Array {
     removeEmptyEntities = () => {
         // Fixme: Double inner loop:
         let entitiesReadyForRemoval = this.filter(entity => {
+            if (entity instanceof ImmutableEntity) {
+                return this._isImmutableEntityEmpty(entity);
+            }
             return entity.startIndex === entity.endIndex
         });
         entitiesReadyForRemoval.forEach(entity => this.removeEntity(entity));
 
         return entitiesReadyForRemoval;
+    };
+
+    _isImmutableEntityEmpty = (entity) => {
+        let optionKeys = Object.keys(entity.options);
+        let emptyKeys = optionKeys.filter(key => {
+            return entity.options[key] === '';
+        });
+        return emptyKeys.length === optionKeys.length
     };
 
     /**

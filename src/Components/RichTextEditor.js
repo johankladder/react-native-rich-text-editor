@@ -16,7 +16,8 @@ export default class RichTextEditor extends React.Component {
             start: 0,
             end: 0
         }, // Currently selection -> Place of the caret
-        showController: false,  // Show controller status -> Only when keyboard is open
+        showController: false,      // Show controller status -> Only when keyboard is open,
+        toShowEditorModal: null,    // A modal window that needs to be shown on top of the editor
     };
 
     componentDidMount() {
@@ -48,10 +49,20 @@ export default class RichTextEditor extends React.Component {
      * plainText.
      */
     onEntityControlButtonPressed = () => {
+        this.updateRichText();
+    };
+
+    updateRichText = () => {
         this.setState({
             richText: this.state.entityApplier.apply(
                 this.state.plainText, this.state.entityMapper
             )
+        })
+    };
+
+    onNeedToShowEditorModal = (modal) => {
+        this.setState({
+            toShowEditorModal: modal
         })
     };
 
@@ -93,14 +104,24 @@ export default class RichTextEditor extends React.Component {
 
     };
 
+    addContent = ({startIndex, endIndex}, content) => {
+        let left = this.state.plainText.substr(0, startIndex);
+        let right = this.state.plainText.substr(endIndex);
+        this.setState({
+            plainText: left + content + right
+        })
+    };
+
     _renderControlBar = () => {
         if (this.state.showController) {
             let {entityMapper, currentSelection} = this.state;
             return (
                 <RichTextEditorControlBar
+                    onContentNeedsToBeAdded={this.addContent.bind(this)}
                     currentSelection={currentSelection}
                     entityMapper={entityMapper}
-                    onControllerButtonPressed={this.onEntityControlButtonPressed.bind(this)}
+                    onEntityManipulated={this.updateRichText.bind(this)}
+                    onNeedToShowEditorModal={this.onNeedToShowEditorModal.bind(this)}
                 />
             )
         }
@@ -112,6 +133,7 @@ export default class RichTextEditor extends React.Component {
     render() {
         return (
             <KeyboardAvoidingView keyboardVerticalOffset={25} style={styles.main} behavior={'position'} enabled>
+                {this.state.toShowEditorModal}
                 <View style={styles.inputArea}>
                     <TextInput
                         multiline={true}
@@ -127,6 +149,7 @@ export default class RichTextEditor extends React.Component {
                         onSelectionChange={this.onSelectionIndexesChange.bind(this)}
                         multiline={true}
                         style={[styles.textView, styles.textInput]}
+                        value={this.state.plainText}
                         onChangeText={this.onChangeText.bind(this)}
                     />
                 </View>
