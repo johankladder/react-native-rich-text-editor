@@ -7,6 +7,7 @@ export default class EntitiesToComponentConverter {
         '<b>': EntitiesToComponentConverter.renderBoldComponent,
         '<i>': EntitiesToComponentConverter.renderItalicComponent,
         '<a>': EntitiesToComponentConverter.renderLinkComponent,
+        '<s>': EntitiesToComponentConverter.renderStrikeThrough,
     };
 
     convertToTextComponents = (baseContent, entityMapper) => {
@@ -56,5 +57,9 @@ export default class EntitiesToComponentConverter {
 
     static renderLinkComponent = (content) => {
         return <Text style={{color: '#5ca1fc', fontWeight: 'bold'}}>{content}</Text>
+    };
+
+    static renderStrikeThrough = (content) => {
+        return <Text style={{textDecorationLine: 'line-through'}}>{content}</Text>
     }
 }

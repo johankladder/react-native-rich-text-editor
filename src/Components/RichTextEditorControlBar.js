@@ -12,6 +12,7 @@ export default class RichTextEditorControlBar extends React.Component {
         buttons: [
             new MutableEntityButton('B', '<b>', '</b>', <Image source={require('../Images/ZSSbold.png')}/>),
             new MutableEntityButton('C', '<i>', '</i>', <Image source={require('../Images/ZSSitalic.png')}/>),
+            new MutableEntityButton('C', '<s>', '</s>', <Image source={require('../Images/ZSSstrikethrough.png')}/>),
             new ImmutableEntityButton('A', '<a>', '</a>', <Image source={require('../Images/ZSSlink.png')}/>,
                 (possiblyEntity) => {
                     this._openLinkCreationField(possiblyEntity)
