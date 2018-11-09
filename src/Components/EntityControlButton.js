@@ -176,6 +176,14 @@ export default class EntityControlButton extends React.Component {
      * @private
      */
     _toggleUpdateMode = (newSelection, wrappedAroundEntities) => {
+
+        // Immutable Entities can not be updated, so they are deleted when found!
+        if (this.props.button instanceof ImmutableEntityButton) {
+            return wrappedAroundEntities.forEach(entity => {
+                this.props.entityMapper.removeEntity(entity)
+            })
+        }
+
         this._updateModeAction(!this.state.updateMode, newSelection, wrappedAroundEntities);
         this.setState({
             updateMode: !this.state.updateMode
