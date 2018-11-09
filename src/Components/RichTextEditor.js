@@ -121,6 +121,15 @@ export default class RichTextEditor extends React.Component {
         })
     };
 
+    /**
+     * Gets the richText which is
+     * @return {string}
+     * @private
+     */
+    _getFormattedRichText = () => {
+        return '<div>' + this.state.richText.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</div>';
+    };
+
     _renderControlBar = () => {
         if (this.state.showController) {
             let {entityMapper, currentSelection} = this.state;
@@ -149,10 +158,10 @@ export default class RichTextEditor extends React.Component {
                         editable={false}
                         style={[styles.textView, styles.richText]}
                     >
-                        {this.state.richText}
+                        {this._getFormattedRichText()}
                     </TextInput>
                     <HTMLView style={[styles.htmlText, styles.textView]}
-                              value={'<div>' + this.state.richText + '</div>'}/>
+                              value={this._getFormattedRichText()}/>
                     <TextInput
                         autoCorrect={!__DEV__}
                         onSelectionChange={this.onSelectionIndexesChange.bind(this)}
