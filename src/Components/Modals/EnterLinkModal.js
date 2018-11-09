@@ -1,13 +1,12 @@
 import React from 'react';
-import {Button, StyleSheet, Text, TextInput, View} from 'react-native';
-import Modal from 'react-native-modal';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
+import BaseModal from "./BaseModal";
 
 export default class EnterLinkModal extends React.Component {
 
     state = {
         link: '',
         content: '',
-
     };
 
     /**
@@ -52,60 +51,48 @@ export default class EnterLinkModal extends React.Component {
 
     render = () => {
         return (
-            <View>
-                <Modal
-                    avoidKeyboard={true}
-                    isVisible={true}
-                >
-                    <View style={[styles.main]}>
-                        {this.state.errorText ? <Text style={[styles.errorText]}>{this.state.errorText}</Text> : null}
-                        <View style={[styles.textInputs]}>
-                            <TextInput
-                                style={[styles.textInput]}
-                                onChangeText={(text) => this.setState({link: text})}
-                            />
-
-                            <TextInput
-                                style={[styles.textInput, {marginTop: 20}]}
-                                onChangeText={(text) => this.setState({content: text})}
-                                placeholder={this._getContent()}
-                            />
-                        </View>
-                        <View style={[styles.buttonsArea]}>
-                            <Button
-                                title={'Cancel'}
-                                color={'red'}
-                                onPress={this._onCancel.bind(this)}
-                            />
-                            <Button
-                                title={'Submit'}
-                                onPress={this._tryToSubmit.bind(this)}
-                            />
-                        </View>
-                    </View>
-                </Modal>
-            </View>
+            <BaseModal
+                onCancel={this._onCancel.bind(this)}
+                onSubmit={this._tryToSubmit.bind(this)}
+            >
+                <View style={[styles.errorContent]}>
+                    {this.state.errorText ? <Text styles={[styles.errorText]}>{this.state.errorText}</Text> : null}
+                </View>
+                <View style={[styles.textInputs]}>
+                    <TextInput
+                        placeholder={'Place your URL here'}
+                        style={[styles.textInput]}
+                        onChangeText={(text) => this.setState({link: text})}
+                    />
+                    <TextInput
+                        style={[styles.textInput, {marginTop: 20}]}
+                        onChangeText={(text) => this.setState({content: text})}
+                        placeholder={'URL name'}
+                    />
+                </View>
+            </BaseModal>
         )
     }
 }
 
 const styles = StyleSheet.create({
-    main: {
-        backgroundColor: 'white',
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
     textInputs: {
         padding: 20,
         width: '100%',
         flexDirection: 'column',
     },
     textInput: {
+        backgroundColor: 'white',
         height: 50,
-        borderWidth: 1
+        borderWidth: 0.5,
+        borderRadius: 6,
+        borderColor: '#8C8D8E',
+        paddingLeft: 20,
+        paddingRight: 20,
+        fontSize: 18,
     },
-    buttonsArea: {
-        flexDirection: 'column'
+    errorContent: {
+        alignItems: 'center'
     },
     errorText: {
         color: 'red'
