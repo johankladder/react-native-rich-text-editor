@@ -207,9 +207,7 @@ export default class EntityControlButton extends React.Component {
                 insertionModeEntity: entity
             })
         } else {
-            this.setState({
-                insertionModeEntity: null
-            })
+            this._resetModes();
         }
     };
 
@@ -227,9 +225,7 @@ export default class EntityControlButton extends React.Component {
         if (modeStatus) {
             this._onSelectionChangeWhileUpdateModeIsOn(newSelection, wrappedAroundEntities);
         } else {
-            this.setState({
-                updateModeEntities: []
-            })
+            this._resetModes();
         }
     };
 
