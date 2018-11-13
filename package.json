@@ -1,6 +1,6 @@
 {
   "name": "@johankladder/react-native-rich-text-editor",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/johankladder/react-native-rich-text-editor/issues"
   },
-  "homepage": "https://github.com/johankladder/react-native-rich-text-editor#readme"
+  "homepage": "https://github.com/johankladder/react-native-rich-text-editor#readme",
+  "dependencies": {
+    "react-native-htmlview": "^0.13.0",
+    "react-native-modal": "^7.0.0"
+  }
 }
