@@ -78,10 +78,28 @@ export default class RichTextEditor extends React.Component {
      * @param newText
      */
     onChangeText = (newText) => {
+        let richText = this._getFormattedRichText(this.state.entityApplier.apply(newText, this.state.entityMapper));
+
         this.setState({
             plainText: newText,
-            richText: this.state.entityApplier.apply(newText, this.state.entityMapper)
-        })
+            richText: richText
+        });
+
+        this.publishText(newText, richText)
+    };
+
+    /**
+     * Function that published the text to the provided listener.
+     * @param plainText
+     * @param richText
+     */
+    publishText = (plainText, richText) => {
+        if (this.props.onChangeText) {
+            this.props.onChangeText({
+                plainText: plainText,
+                richText: richText
+            })
+        }
     };
 
     /**
@@ -122,13 +140,8 @@ export default class RichTextEditor extends React.Component {
         })
     };
 
-    /**
-     * Gets the richText which is
-     * @return {string}
-     * @private
-     */
-    _getFormattedRichText = () => {
-        return '<div>' + this.state.richText.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</div>';
+    _getFormattedRichText = (richText) => {
+        return '<div>' + richText.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</div>';
     };
 
     _renderControlBar = () => {
