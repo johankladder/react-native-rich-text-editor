@@ -1,4 +1,4 @@
-import RichTextEditor from './src/RichTextEditor';
+import RichTextEditor from './src/Components/RichTextEditor.js';
 
 export { RichTextEditor };
 
