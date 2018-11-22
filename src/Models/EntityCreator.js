@@ -55,7 +55,7 @@ export default class EntityCreator {
         if (!this._isImmutableNode(node)) {
             return this._createMutableEntity(
                 startTag.startOffset,
-                endTag.startOffset,
+                endTag.startOffset - (endTag.endOffset-endTag.startCol),
                 tagName,
                 tagName
             )
