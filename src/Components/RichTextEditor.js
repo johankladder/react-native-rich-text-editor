@@ -30,13 +30,6 @@ export default class RichTextEditor extends React.Component {
         this.initializeEditor(this.props.initialRichContent)
     };
 
-    shouldComponentUpdate = (nextProps) => {
-        if (nextProps.initialRichContent !== this.props.initialRichContent) {
-            this.initializeEditor(nextProps.initialRichContent)
-        }
-        return true
-    };
-
     componentWillUnmount() {
         this.keyboardDidShowListener.remove();
         this.keyboardDidHideListener.remove();
