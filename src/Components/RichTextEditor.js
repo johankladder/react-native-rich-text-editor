@@ -27,8 +27,14 @@ export default class RichTextEditor extends React.Component {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
         this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardWillHide.bind(this));
 
-        this.initializeEditor()
+        this.initializeEditor(this.props.initialRichContent)
+    };
 
+    shouldComponentUpdate = (nextProps) => {
+        if (nextProps.initialRichContent !== this.props.initialRichContent) {
+            this.initializeEditor(nextProps.initialRichContent)
+        }
+        return true
     };
 
     componentWillUnmount() {
@@ -52,9 +58,11 @@ export default class RichTextEditor extends React.Component {
      * Initialises the textEditor with initial values when needed. An initial value can be a initial rich text value
      * that was previously saved and needs to be inserted again.
      */
-    initializeEditor = () => {
-        if (this.props.initialRichContent) {
-            let {baseContent, entityMapper} = this.state.entityCreator.createFromRichText(this.props.initialRichContent)
+    initializeEditor = (initialRichContent) => {
+        if (initialRichContent) {
+            let {baseContent, entityMapper} = this.state.entityCreator.createFromRichText(
+                initialRichContent
+            );
             this.setState({
                 entityMapper: entityMapper
             }, () => {
