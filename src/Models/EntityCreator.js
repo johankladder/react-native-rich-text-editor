@@ -63,19 +63,20 @@ export default class EntityCreator {
         if (!this._isImmutableNode(node)) {
             return this._createMutableEntity(
                 startTag.startOffset,
-                endTag.startOffset - (endTag.endOffset-endTag.startCol),
+                endTag.startOffset - (endTag.endOffset - endTag.startCol),
                 tagName,
                 tagName
             )
         } else {
             let options = this._createOptionsFromAttributes(node);
+            let content = endTag ? this._extractContentFromNode(node) : '';
             return this._createImmutableEntity(
                 startTag.startOffset,
-                startTag.startOffset,
+                content.length ? startTag.startOffset + content.length : startTag.startOffset,
                 tagName,
                 options,
                 endTag ? tagName : undefined,
-                this._extractContentFromNode(node)
+                content
             )
         }
     };

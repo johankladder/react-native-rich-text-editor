@@ -21,6 +21,14 @@ test('Test two entities are created when surrounding normal text', () => {
     testEntityWithValues(entityMapper[1], 16, 16, '<br/>', '');
 });
 
+test('Test two entities are created immutable with content', () => {
+    let {baseContent, entityMapper} = this.entityCreator.createFromRichText('<b>test</b><a href="test">content</a>');
+    expect(baseContent).toBe('testcontent');
+    expect(entityMapper).toHaveLength(2);
+    testEntityWithValues(entityMapper[0], 0, 4, '<b>', '</b>');
+    testEntityWithValues(entityMapper[1], 4, 11, '<a>', '</a>');
+});
+
 const testEntityWithValues = (entity, startIndex, endIndex, openTag, closeTag) => {
     expect(entity.startIndex).toBe(startIndex);
     expect(entity.endIndex).toBe(endIndex);
