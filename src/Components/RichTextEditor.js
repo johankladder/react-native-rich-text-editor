@@ -4,6 +4,7 @@ import EntityMapper from "../Models/EntityMapper";
 import EntityApplier from "../Models/EntityApplier";
 import RichTextEditorControlBar from "./RichTextEditorControlBar";
 import EntitiesToComponentConverter from "./Converter/EntitiesToComponentConverter";
+import EntityCreator from "../Models/EntityCreator";
 
 export default class RichTextEditor extends React.Component {
 
@@ -13,6 +14,7 @@ export default class RichTextEditor extends React.Component {
         entityMapper: new EntityMapper(),
         entityApplier: new EntityApplier(),
         entitiesConverter: new EntitiesToComponentConverter(),
+        entityCreator: new EntityCreator(),
         currentSelection: {
             start: 0,
             end: 0
@@ -24,6 +26,9 @@ export default class RichTextEditor extends React.Component {
     componentDidMount() {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
         this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardWillHide.bind(this));
+
+        this.initializeEditor()
+
     };
 
     componentWillUnmount() {
@@ -41,6 +46,21 @@ export default class RichTextEditor extends React.Component {
         this.setState({
             showController: false
         })
+    };
+
+    /**
+     * Initialises the textEditor with initial values when needed. An initial value can be a initial rich text value
+     * that was previously saved and needs to be inserted again.
+     */
+    initializeEditor = () => {
+        if (this.props.initialRichContent) {
+            let {baseContent, entityMapper} = this.state.entityCreator.createFromRichText(this.props.initialRichContent)
+            this.setState({
+                entityMapper: entityMapper
+            }, () => {
+                this.onChangeText(baseContent)
+            })
+        }
     };
 
     /**
@@ -166,7 +186,7 @@ export default class RichTextEditor extends React.Component {
                 editable={false}
                 style={[styles.textView, styles.richText]}
             >
-                {this._getFormattedRichText()}
+                {this.state.richText}
             </TextInput>
         )
     };
@@ -179,7 +199,7 @@ export default class RichTextEditor extends React.Component {
             <KeyboardAvoidingView keyboardVerticalOffset={25} style={styles.main} behavior={'position'} enabled>
                 {this.state.toShowEditorModal}
                 <View style={styles.inputArea}>
-                    {/*{this.renderRichHtmlText()}*/}
+                    {this.renderRichHtmlText()}
                     <TextInput
                         autoCorrect={!__DEV__}
                         onSelectionChange={this.onSelectionIndexesChange.bind(this)}
