@@ -15,14 +15,21 @@ export default class EntityCreator {
 
         let nodes = this._parseToHTMLDOM(richText);
 
+        let decrementStartIndex = 0;
+
         nodes.forEach(node => {
             let extractedPlainContent = '';
             if (!this._isNodePlainText(node)) {
+
                 let entity = this._createEntityFromNode(node);
+
+                entity = entityMapper.shiftEntity(decrementStartIndex, entity);
 
                 entityMapper.addEntity(entity);
 
                 extractedPlainContent = this._extractContentFromNode(node);
+
+                decrementStartIndex = decrementStartIndex - this._getDecrementIndexForEntity(entity);
             } else {
                 extractedPlainContent = node.value
             }
@@ -110,5 +117,13 @@ export default class EntityCreator {
 
     _isNodePlainText = (node) => {
         return node.nodeName === '#text'
+    };
+
+    _getDecrementIndexForEntity = (entity) => {
+        let additionalIncrement = 0;
+        if (entity instanceof ImmutableEntity) {
+            additionalIncrement = entity.getOptionsString().length
+        }
+        return entity.openTag.length + entity.closeTag.length + additionalIncrement;
     };
 }
