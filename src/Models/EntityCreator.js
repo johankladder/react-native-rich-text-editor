@@ -13,6 +13,8 @@ export default class EntityCreator {
         let entityMapper = new EntityMapper();
         let baseContent = '';
 
+        richText = this._filterRichTextWithoutDiv(richText)
+
         let nodes = this._parseToHTMLDOM(richText);
 
         let decrementStartIndex = 0;
@@ -40,6 +42,10 @@ export default class EntityCreator {
             baseContent: baseContent,
             entityMapper: entityMapper
         }
+    };
+
+    _filterRichTextWithoutDiv = (richText) => {
+        return richText.replace(/^<div[^>]*>|<\/div>$/g, '')
     };
 
     _parseToHTMLDOM = (richText) => {
