@@ -5,6 +5,10 @@ import ImmutableEntity from "./Entities/ImmutableEntity";
 
 export default class EntityCreator {
 
+    static IMMUTABLE_TAGS = [
+        'a', // <a></a> & <a/> tags are immutable in this context.
+    ];
+
     createFromRichText = (richText) => {
         let entityMapper = new EntityMapper();
         let baseContent = '';
@@ -12,15 +16,17 @@ export default class EntityCreator {
         let nodes = this._parseToHTMLDOM(richText);
 
         nodes.forEach(node => {
-            if(node.nodeName !== '#text') {
+            let extractedPlainContent = '';
+            if (!this._isNodePlainText(node)) {
                 let entity = this._createEntityFromNode(node);
 
                 entityMapper.addEntity(entity);
 
-                baseContent += this._extractContentFromNode(node);
+                extractedPlainContent = this._extractContentFromNode(node);
             } else {
-                baseContent += node.value
+                extractedPlainContent = node.value
             }
+            baseContent += extractedPlainContent
         });
 
         return {
@@ -36,7 +42,7 @@ export default class EntityCreator {
     };
 
     _extractContentFromNode = (node) => {
-        if(node.childNodes.length) {
+        if (node.childNodes.length) {
             return node.childNodes[0].value
         }
         return ''
@@ -46,7 +52,7 @@ export default class EntityCreator {
         let {tagName, sourceCodeLocation} = node;
         let {startTag, endTag} = sourceCodeLocation;
 
-        if(!this._isImmutableNode(node)) {
+        if (!this._isImmutableNode(node)) {
             return this._createMutableEntity(
                 startTag.startOffset,
                 endTag.startOffset,
@@ -70,7 +76,7 @@ export default class EntityCreator {
         return new MutableEntity(
             startIndex,
             endIndex,
-            "<" +  openTagFix + ">",
+            "<" + openTagFix + ">",
             "</" + closeTagFix + ">"
         )
     };
@@ -79,9 +85,9 @@ export default class EntityCreator {
         return new ImmutableEntity(
             startIndex,
             endIndex,
-            endTagFix ? "<" + openTagFix + ">" :"<" + openTagFix + "/>",
+            endTagFix ? "<" + openTagFix + ">" : "<" + openTagFix + "/>",
             options,
-            endTagFix ? '</' + endTagFix + '>': '',
+            endTagFix ? '</' + endTagFix + '>' : '',
             content
         )
     };
@@ -97,6 +103,12 @@ export default class EntityCreator {
     };
 
     _isImmutableNode = (node) => {
-        return node.tagName === 'a'
-    }
+        return EntityCreator.IMMUTABLE_TAGS.find(tag => {
+            return tag === node.tagName
+        })
+    };
+
+    _isNodePlainText = (node) => {
+        return node.nodeName === '#text'
+    };
 }
