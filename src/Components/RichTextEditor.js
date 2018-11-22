@@ -199,7 +199,7 @@ export default class RichTextEditor extends React.Component {
             <KeyboardAvoidingView keyboardVerticalOffset={25} style={styles.main} behavior={'position'} enabled>
                 {this.state.toShowEditorModal}
                 <View style={styles.inputArea}>
-                    {this.renderRichHtmlText()}
+                    {/*{this.renderRichHtmlText()}*/}
                     <TextInput
                         autoCorrect={!__DEV__}
                         onSelectionChange={this.onSelectionIndexesChange.bind(this)}
