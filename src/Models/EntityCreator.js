@@ -7,6 +7,7 @@ export default class EntityCreator {
 
     static IMMUTABLE_TAGS = [
         'a', // <a></a> & <a/> tags are immutable in this context.
+        'br'
     ];
 
     createFromRichText = (richText) => {
