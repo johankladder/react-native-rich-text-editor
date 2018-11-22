@@ -18,6 +18,7 @@
   "homepage": "https://github.com/johankladder/react-native-rich-text-editor#readme",
   "dependencies": {
     "react-native-htmlview": "^0.13.0",
-    "react-native-modal": "^7.0.0"
+    "react-native-modal": "^7.0.0",
+    "parse5": "^5.1.0"
   }
 }
