@@ -63,7 +63,7 @@ export default class EntityCreator {
             let options = this._createOptionsFromAttributes(node);
             return this._createImmutableEntity(
                 startTag.startOffset,
-                endTag ? endTag.startOffset : startTag.startOffset,
+                startTag.startOffset,
                 tagName,
                 options,
                 endTag ? tagName : undefined,

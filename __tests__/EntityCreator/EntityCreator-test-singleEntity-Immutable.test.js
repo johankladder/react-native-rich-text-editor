@@ -38,14 +38,14 @@ test('Test one immutable entity created with content when one is found and other
     let {baseContent, entityMapper} = this.entityCreator.createFromRichText('<a href="test">content</a> other test');
     expect(baseContent).toBe('content other test');
     expect(entityMapper).toHaveLength(1);
-    testEntityWithValues(entityMapper[0], 0, 22, '<a>', {href: 'test'}, '</a>', 'content');
+    testEntityWithValues(entityMapper[0], 0, 0, '<a>', {href: 'test'}, '</a>', 'content');
 });
 
 test('Test one entity created with empty content (with close tag)', () => {
     let {baseContent, entityMapper} = this.entityCreator.createFromRichText('<a href="test"></a> other test');
     expect(baseContent).toBe(' other test');
     expect(entityMapper).toHaveLength(1);
-    testEntityWithValues(entityMapper[0], 0, 15, '<a>', {href: 'test'}, '</a>', '');
+    testEntityWithValues(entityMapper[0], 0, 0, '<a>', {href: 'test'}, '</a>', '');
 });
 
 const testEntityWithValues = (entity, startIndex, endIndex, openTag, options, closeTag, content) => {
