@@ -7,7 +7,6 @@ export default class EntityCreator {
 
     static IMMUTABLE_TAGS = [
         'a', // <a></a> & <a/> tags are immutable in this context.
-        'br'
     ];
 
     createFromRichText = (richText) => {
@@ -118,7 +117,14 @@ export default class EntityCreator {
     };
 
     _isNodePlainText = (node) => {
-        return node.nodeName === '#text'
+        if (node.nodeName === '#text') {
+            return true;
+        }
+        if (node.nodeName === 'br') {
+            node.value = '\n';
+            return true
+        }
+        return false;
     };
 
     _getDecrementIndexForEntity = (entity) => {
