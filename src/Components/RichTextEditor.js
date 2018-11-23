@@ -3,7 +3,7 @@ import {DeviceEventEmitter, Keyboard, KeyboardAvoidingView, StyleSheet, TextInpu
 import EntityMapper from "../Models/EntityMapper";
 import EntityApplier from "../Models/EntityApplier";
 import RichTextEditorControlBar from "./RichTextEditorControlBar";
-import EntitiesToComponentConverter from "./Converter/EntitiesToComponentConverter";
+import EntitiesToComponentConverter from "../Models/EntitiesToComponentConverter";
 import EntityCreator from "../Models/EntityCreator";
 
 export default class RichTextEditor extends React.Component {
@@ -197,7 +197,7 @@ export default class RichTextEditor extends React.Component {
      */
     render() {
         return (
-            <KeyboardAvoidingView keyboardVerticalOffset={25} style={styles.main} behavior={'position'} enabled>
+            <View>
                 {this.state.toShowEditorModal}
                 <View style={styles.inputArea}>
                     {/*{this.renderRichHtmlText()}*/}
@@ -212,26 +212,25 @@ export default class RichTextEditor extends React.Component {
                             this.state.plainText, this.state.entityMapper
                         )}
                     </TextInput>
+                    {this._renderControlBar()}
                 </View>
-                {this._renderControlBar()}
 
-            </KeyboardAvoidingView>
+            </View>
         )
     }
 }
 
 const styles = StyleSheet.create({
-    main: {
-        width: '100%',
-    },
     inputArea: {
-        backgroundColor: 'white',
+        height: '100%',
+        flexDirection: 'column',
     },
     textView: {
-        width: '100%',
-        height: 200,
+        backgroundColor: 'yellow',
+        flex: 1,
     },
     textInput: {
+        flex: 1,
         backgroundColor: 'white',
         borderWidth: 0.5,
         borderRadius: 6,
@@ -244,5 +243,4 @@ const styles = StyleSheet.create({
     htmlText: {
         backgroundColor: 'green'
     }
-
-})
+});
