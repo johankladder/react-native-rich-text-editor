@@ -174,6 +174,16 @@ export default class RichTextEditor extends React.Component {
         return this.props.placeHolder ? this.props.placeHolder : undefined
     };
 
+    /**
+     * Returns the combineTags property. This will determine if the editor can put tags
+     * inside a other tag.
+     * @return {boolean}
+     * @private
+     */
+    _getCombineTagsStatus = () => {
+        return this.props.multiButtonAllowed ? this.props.multiButtonAllowed : false
+    };
+
     _renderControlBar = () => {
         if (this.state.showController) {
             let {entityMapper, currentSelection} = this.state;
@@ -184,6 +194,7 @@ export default class RichTextEditor extends React.Component {
                     onContentNeedsToBeAdded={this.addContent.bind(this)}
                     onEntityManipulated={this.updateRichText.bind(this)}
                     onNeedToShowEditorModal={this.onNeedToShowEditorModal.bind(this)}
+                    multiButtonAllowed={this._getCombineTagsStatus()}
                 />
             )
         }

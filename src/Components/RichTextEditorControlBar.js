@@ -18,6 +18,7 @@ export default class RichTextEditorControlBar extends React.Component {
                     this._openLinkCreationField(possiblyEntity)
                 })
         ],
+        buttonsActivated: []
     };
 
     _openLinkCreationField = (possibleEntity) => {
@@ -53,12 +54,44 @@ export default class RichTextEditorControlBar extends React.Component {
         }
     };
 
+    _onAllowedToBePressed = (button) => {
+        if(!this.props.multiButtonAllowed) {
+            // Allow to be pushed if already was pushed or if empty:
+            return this.state.buttonsActivated.indexOf(button) >= 0 || !this.state.buttonsActivated.length;
+        }
+        return true;
+    };
+
+    _onButtonActivationChanged = (button, status) => {
+        if(status) {
+            this._addButtonToActivatedButtons(button)
+        } else {
+            this._removeButtonFromActivatedButtons(button)
+        }
+    };
+
+    _addButtonToActivatedButtons = (button) => {
+        this.setState({
+            buttonsActivated: [...this.state.buttonsActivated, button]
+        })
+    };
+
+    _removeButtonFromActivatedButtons = (button) => {
+        let copy = [...this.state.buttonsActivated];
+        copy.splice(copy.indexOf(button), 1);
+        this.setState({
+            buttonsActivated: copy
+        })
+    };
+
     _renderButton = (button) => {
         return (
             <View>
                 <EntityControlButton
                     entityInfo={button.entityInfo}
+                    onButtonActivationChanged={this._onButtonActivationChanged.bind(this)}
                     onEntityControlButtonPressed={this._onEntityManipulated.bind(this)}
+                    onAllowedToBePressedCheck={this._onAllowedToBePressed.bind(this)}
                     entityMapper={this.props.entityMapper}
                     currentSelection={this.props.currentSelection}
                     button={button}

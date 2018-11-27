@@ -1,5 +1,5 @@
 import React from 'react';
-import {DeviceEventEmitter, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {DeviceEventEmitter, StyleSheet, TouchableOpacity} from 'react-native';
 import EntityButton from "./EntityButton";
 import Entity from "../Models/Entities/Entity";
 import MutableEntityButton from "./Buttons/MutableEntityButton";
@@ -51,16 +51,31 @@ export default class EntityControlButton extends React.Component {
      * @private
      */
     _onPressControllerButton = (button) => {
-        if (this.props.currentSelection) {
-            this._determineActionToPerform(
-                this.props.currentSelection,
-                button
-            );
-
-            if (this.props.onEntityControlButtonPressed) {
-                this.props.onEntityControlButtonPressed(button)
+        if (this._isAllowedToBePressed(this)) {
+            if (this.props.currentSelection) {
+                this._determineActionToPerform(
+                    this.props.currentSelection,
+                    button
+                );
+                if (this.props.onEntityControlButtonPressed) {
+                    this.props.onEntityControlButtonPressed(button)
+                }
             }
         }
+    };
+
+    /**
+     * Function to check whether a button can be pressed. In some situation a button is not allowed to be pressed.
+     *
+     * @param button
+     * @return {*}
+     * @private
+     */
+    _isAllowedToBePressed = (button) => {
+        if (this.props.onAllowedToBePressedCheck) {
+            return this.props.onAllowedToBePressedCheck(button)
+        }
+        return true;
     };
 
     /**
@@ -168,6 +183,8 @@ export default class EntityControlButton extends React.Component {
         this._insertionModeAction(!this.state.insertionMode, entity);
         this.setState({
             insertionMode: !this.state.insertionMode
+        }, () => {
+            this._setButtonAsActivated(this.state.insertionMode)
         })
     };
 
@@ -187,7 +204,22 @@ export default class EntityControlButton extends React.Component {
         this._updateModeAction(!this.state.updateMode, newSelection, wrappedAroundEntities);
         this.setState({
             updateMode: !this.state.updateMode
+        }, () => {
+            this._setButtonAsActivated(this.state.updateMode)
         })
+    };
+
+    /**
+     * Sets the button as activated in the controlBar. This is needed to control whether the user likes to have
+     * multi tag support.
+     *
+     * @param status
+     * @private
+     */
+    _setButtonAsActivated = (status) => {
+        if (this.props.onButtonActivationChanged) {
+            this.props.onButtonActivationChanged(this, status)
+        }
     };
 
     /**
@@ -344,7 +376,5 @@ const styles = StyleSheet.create({
     buttonActivatedStyle: {
         backgroundColor: '#5ca1fc'
     },
-    buttonStyle: {
-
-    }
+    buttonStyle: {}
 });
