@@ -1,5 +1,5 @@
 import React from 'react';
-import {DeviceEventEmitter, Keyboard, KeyboardAvoidingView, StyleSheet, TextInput, View} from 'react-native';
+import {DeviceEventEmitter, Keyboard, StyleSheet, TextInput, View} from 'react-native';
 import EntityMapper from "../Models/EntityMapper";
 import EntityApplier from "../Models/EntityApplier";
 import RichTextEditorControlBar from "./RichTextEditorControlBar";
@@ -165,6 +165,15 @@ export default class RichTextEditor extends React.Component {
         return '<div>' + richText.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</div>';
     };
 
+    /**
+     * Returns a placeHolder for the Editor if any.
+     * @return {string, null}
+     * @private
+     */
+    _getPlaceHolder = () => {
+        return this.props.placeHolder ? this.props.placeHolder : undefined
+    };
+
     _renderControlBar = () => {
         if (this.state.showController) {
             let {entityMapper, currentSelection} = this.state;
@@ -207,6 +216,7 @@ export default class RichTextEditor extends React.Component {
                         multiline={true}
                         style={[styles.textView, styles.textInput]}
                         onChangeText={this.onChangeText.bind(this)}
+                        placeholder={this._getPlaceHolder()}
                     >
                         {this.state.entitiesConverter.convertToTextComponents(
                             this.state.plainText, this.state.entityMapper
