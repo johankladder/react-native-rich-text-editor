@@ -18,6 +18,15 @@ export default class EntityMapper extends Array {
     };
 
     /**
+     * Function for adding multiple entities to the EntityMapper.
+     *
+     * @param entities
+     */
+    addEntities = (entities) => {
+        entities.forEach(entity => this.addEntity(entity))
+    };
+
+    /**
      * Updates a Entity with the given new Entity.
      *
      * @param entity
