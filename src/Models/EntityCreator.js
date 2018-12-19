@@ -21,15 +21,23 @@ export default class EntityCreator {
             let extractedPlainContent = '';
             if (!this._isNodePlainText(node)) {
 
-                let entity = this._createEntityFromNode(node);
+                let {baseNode, childNodes, textualContent} = this._extractMultiWrappedNodes(node);
 
-                entity = entityMapper.shiftEntity(decrementStartIndex, entity);
+                extractedPlainContent += textualContent;
 
-                entityMapper.addEntity(entity);
+                baseNode = this._decrementCountBaseNodeEndWhenWithoutChildren(baseNode, childNodes);
 
-                extractedPlainContent = this._extractContentFromNode(node);
+                this._makeChildNodesHaveSameSourceCodeLocationAsBaseNode(baseNode, childNodes);
 
-                decrementStartIndex = decrementStartIndex - this._getDecrementIndexForEntity(entity);
+                let {baseNodeEntity, childNodeEntities} = this._createEntitiesFromNodes(baseNode, childNodes);
+
+                baseNodeEntity = entityMapper.shiftEntity(decrementStartIndex, baseNodeEntity);
+
+                entityMapper.addEntities([baseNodeEntity, ...childNodeEntities]);
+
+                extractedPlainContent += this._extractContentFromNodes(baseNode, childNodes);
+
+                decrementStartIndex = decrementStartIndex - this._getDecrementIndexForEntity(baseNodeEntity);
             } else {
                 extractedPlainContent = node.value
             }
@@ -40,6 +48,108 @@ export default class EntityCreator {
             baseContent: baseContent,
             entityMapper: entityMapper
         }
+    };
+
+    _extractContentFromNodes = (baseNode, childNodes) => {
+        let content = '';
+
+        // First check if the baseNode is plainText
+        if (this._isNodePlainText(baseNode)) {
+            content += baseNode.value
+        }
+
+        childNodes.forEach(childNode => {
+            let possibleTextNode = childNode.childNodes[0];
+            if (this._isNodePlainText(possibleTextNode)) {
+                content += possibleTextNode.value
+            }
+        });
+
+        return content
+    };
+
+    /**
+     * Function that let the given childNodes have the same sourceCodeLocation property as the given baseNode.
+     *
+     * @param baseNode
+     * @param childNodes
+     * @return {*}
+     * @private
+     */
+    _makeChildNodesHaveSameSourceCodeLocationAsBaseNode = (baseNode, childNodes) => {
+        childNodes.forEach((childNode) => {
+            childNode.sourceCodeLocation = baseNode.sourceCodeLocation;
+        });
+
+        return childNodes;
+    };
+
+    _decrementCountBaseNodeEndWhenWithoutChildren = (baseNode, childNodes) => {
+        let count = 0;
+        childNodes.forEach(childNode => {
+            let {sourceCodeLocation} = childNode;
+            let {startTag, endTag} = sourceCodeLocation;
+            count = count + (startTag.endOffset - startTag.startOffset);
+            count = count + (endTag.endOffset - endTag.startOffset);
+        });
+
+        let {sourceCodeLocation} = baseNode;
+        let {endTag} = sourceCodeLocation;
+
+        // Immutable doesnt have a endtag
+        if (endTag) {
+            endTag.startOffset = endTag.startOffset - count;
+            endTag.endOffset = endTag.endOffset - count;
+            endTag.startCol = endTag.startCol - count;
+        }
+        return baseNode;
+
+    };
+
+    _extractMultiWrappedNodes = (node) => {
+
+        let childNodesThatCanBeEntities = [];
+        let textualContent = '';
+
+        node.childNodes.forEach(childNode => {
+            if (!this._isNodePlainText(childNode)) {
+                childNodesThatCanBeEntities.push(childNode)
+            } else {
+                textualContent = childNode.value;
+            }
+        });
+
+        return {
+            baseNode: node,
+            childNodes: childNodesThatCanBeEntities,
+            textualContent: textualContent
+        }
+    };
+
+    _createEntitiesFromNodes = (baseNode, childNodes) => {
+        return {
+            baseNodeEntity: this._createEntityFromNode(baseNode),
+            childNodeEntities: this._createEntitiesFromChildNodes(childNodes),
+        }
+    };
+
+    /**
+     * Creates entities from childNodes when they are not plainText.
+     *
+     * @param childNodes
+     * @return {Array}
+     * @private
+     */
+    _createEntitiesFromChildNodes = (childNodes) => {
+        let entities = [];
+
+        childNodes.forEach(childNode => {
+            if (!this._isNodePlainText(childNode)) {
+                entities.push(this._createEntityFromNode(childNode))
+            }
+        });
+
+        return entities;
     };
 
     _filterRichTextWithoutDiv = (richText) => {
