@@ -1,7 +1,7 @@
-import EntityMapper from "../../src/Models/EntityMapper";
-import EntityApplier from "../../src/Models/EntityApplier";
-import Entity from "../../src/Models/Entities/Entity";
-import ImmutableEntity from "../../src/Models/Entities/ImmutableEntity";
+import EntityMapper from "../../../src/Models/EntityMapper";
+import EntityApplier from "../../../src/Models/EntityApplier";
+import Entity from "../../../src/Models/Entities/Entity";
+import ImmutableEntity from "../../../src/Models/Entities/ImmutableEntity";
 
 beforeEach(() => {
     this.simpleBaseContent = 'This is test-base content!';
