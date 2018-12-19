@@ -1,4 +1,4 @@
-import EntityCreator from "../../src/Models/EntityCreator";
+import EntityCreator from "../../../src/Models/EntityCreator";
 
 beforeEach(() => {
     this.entityCreator = new EntityCreator();
