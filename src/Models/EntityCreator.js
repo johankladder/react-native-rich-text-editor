@@ -26,7 +26,7 @@ export default class EntityCreator {
             let extractedPlainContent = '';
             if (!this._isNodePlainText(node)) {
 
-                let {baseNode, childNodes, textualContent} = this._extractMultiWrappedNodes(node);
+                let {baseNode, childNodes, textualContentObjects} = this._extractMultiWrappedNodes(node);
 
                 baseNode = this._decrementCountBaseNodeEndWhenWithoutChildren(baseNode, childNodes);
 
@@ -40,8 +40,7 @@ export default class EntityCreator {
 
                 let content = this._extractContentFromNodes(baseNode, childNodes);
 
-                extractedPlainContent += this._createContentFromArray([...textualContent, {...content}])
-
+                extractedPlainContent += this._createContentFromArray([...textualContentObjects, {...content}])
 
                 decrementStartIndex = decrementStartIndex - this._getDecrementIndexForEntity(baseNodeEntity);
             } else {
@@ -60,7 +59,7 @@ export default class EntityCreator {
         let content = '';
 
         let sorted = contentArray.sort((a, b) => {
-            return a.indexTextualContentStart - b.indexTextualContentStart;
+            return a.startIndex - b.startIndex;
         });
 
         sorted.forEach(({value}) => {
@@ -74,23 +73,27 @@ export default class EntityCreator {
     _extractMultiWrappedNodes = (node) => {
 
         let childNodesThatCanBeEntities = [];
-        let textualContent = [];
+        let textualContentObjects = [];
 
         node.childNodes.forEach(childNode => {
             if (!this._isNodePlainText(childNode)) {
                 childNodesThatCanBeEntities.push(childNode)
             } else {
-                textualContent.push({
-                    value: childNode.value,
-                    indexTextualContentStart: childNode.sourceCodeLocation.startOffset
-                });
+                textualContentObjects.push(this._createTextualContentObjectFromNode(childNode));
             }
         });
 
         return {
             baseNode: node,
             childNodes: childNodesThatCanBeEntities,
-            textualContent: textualContent,
+            textualContentObjects: textualContentObjects,
+        }
+    };
+
+    _createTextualContentObjectFromNode = ({value, sourceCodeLocation}) => {
+        return {
+            value: value,
+            startIndex: sourceCodeLocation ? sourceCodeLocation.startOffset : 0
         }
     };
 
@@ -106,10 +109,7 @@ export default class EntityCreator {
 
         allContent += content;
 
-        return {
-            value: allContent,
-            indexTextualContentStart: contentLocation
-        }
+        return this._createTextualContentObjectFromNode({value: allContent, sourceCodeLocation: contentLocation})
     };
 
     _extractContentFromChildNodes = (childNodes) => {
@@ -120,7 +120,7 @@ export default class EntityCreator {
             let possibleTextNode = childNode.childNodes[0];
             if (this._isNodePlainText(possibleTextNode)) {
                 content += possibleTextNode.value;
-                contentLocation = possibleTextNode.sourceCodeLocation.startOffset
+                contentLocation = possibleTextNode.sourceCodeLocation
             }
         });
 
