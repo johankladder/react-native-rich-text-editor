@@ -78,7 +78,14 @@ export default class EntityCreator {
      */
     _makeChildNodesHaveSameSourceCodeLocationAsBaseNode = (baseNode, childNodes) => {
         childNodes.forEach((childNode) => {
-            childNode.sourceCodeLocation = baseNode.sourceCodeLocation;
+            let {sourceCodeLocation} = childNode;
+            let {endTag} = sourceCodeLocation;
+
+
+            if(endTag) {
+                sourceCodeLocation.endTag = baseNode.sourceCodeLocation.endTag
+            }
+            sourceCodeLocation.startTag = baseNode.sourceCodeLocation.startTag
         });
 
         return childNodes;
@@ -90,7 +97,10 @@ export default class EntityCreator {
             let {sourceCodeLocation} = childNode;
             let {startTag, endTag} = sourceCodeLocation;
             count = count + (startTag.endOffset - startTag.startOffset);
-            count = count + (endTag.endOffset - endTag.startOffset);
+
+            if(endTag) {
+                count = count + (endTag.endOffset - endTag.startOffset);
+            }
         });
 
         let {sourceCodeLocation} = baseNode;
@@ -231,12 +241,14 @@ export default class EntityCreator {
     };
 
     _isNodePlainText = (node) => {
-        if (node.nodeName === '#text') {
-            return true;
-        }
-        if (node.nodeName === 'br') {
-            node.value = '\n';
-            return true
+        if(node) {
+            if (node.nodeName === '#text') {
+                return true;
+            }
+            if (node.nodeName === 'br') {
+                node.value = '\n';
+                return true
+            }
         }
         return false;
     };
