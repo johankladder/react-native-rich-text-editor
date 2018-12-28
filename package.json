@@ -27,9 +27,8 @@
     "metro-react-native-babel-preset": "0.49.0"
   },
   "dependencies": {
-    "react": "16.6.0-alpha.8af6728",
     "parse5": "^5.1.0",
-    "react-native-htmlview": "^0.13.0",
+    "react": "16.6.0-alpha.8af6728",
     "react-native-modal": "^7.0.0"
   }
 }
