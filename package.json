@@ -29,7 +29,6 @@
   "dependencies": {
     "react": "16.6.0-alpha.8af6728",
     "parse5": "^5.1.0",
-    "react-native": "^0.57",
     "react-native-htmlview": "^0.13.0",
     "react-native-modal": "^7.0.0"
   }
