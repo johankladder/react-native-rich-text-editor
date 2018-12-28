@@ -10,13 +10,14 @@ export default class RichTextEditorControlBar extends React.Component {
 
     state = {
         buttons: [
-            new MutableEntityButton('B', '<b>', '</b>', <Image source={require('../Images/ZSSbold.png')}/>),
-            new MutableEntityButton('C', '<i>', '</i>', <Image source={require('../Images/ZSSitalic.png')}/>),
-            new MutableEntityButton('C', '<s>', '</s>', <Image source={require('../Images/ZSSstrikethrough.png')}/>),
             new ImmutableEntityButton('A', '<a>', '</a>', <Image source={require('../Images/ZSSlink.png')}/>,
                 (possiblyEntity) => {
                     this._openLinkCreationField(possiblyEntity)
-                })
+                }),
+            new MutableEntityButton('B', '<b>', '</b>', <Image source={require('../Images/ZSSbold.png')}/>),
+            new MutableEntityButton('C', '<i>', '</i>', <Image source={require('../Images/ZSSitalic.png')}/>),
+            new MutableEntityButton('C', '<s>', '</s>', <Image source={require('../Images/ZSSstrikethrough.png')}/>),
+
         ],
         buttonsActivated: []
     };
@@ -26,6 +27,10 @@ export default class RichTextEditorControlBar extends React.Component {
             onSubmit={(options, content) => this._addToMapperCloseAndRefresh(possibleEntity, options, content)}
             onCancel={() => this._hideEditorModal()}
         />)
+    };
+
+    _shouldShowTagButtons = () => {
+        return this.props.tagSupport;
     };
 
     _addToMapperCloseAndRefresh = (possibleEntity, options, content) => {
@@ -42,9 +47,18 @@ export default class RichTextEditorControlBar extends React.Component {
         this.props.onNeedToShowEditorModal(null)
     };
 
+    _buttonVisibleAccordingToTagSupport = (button) => {
+        let status = this._shouldShowTagButtons();
+
+        if(button instanceof MutableEntityButton) {
+            return !!status;
+        }
+        return true;
+    };
+
     _renderButtons = (buttons) => {
         return buttons.map(button => {
-            return this._renderButton(button)
+            return this._renderButton(button, this._buttonVisibleAccordingToTagSupport(button))
         })
     };
 
@@ -84,14 +98,16 @@ export default class RichTextEditorControlBar extends React.Component {
         })
     };
 
-    _renderButton = (button) => {
+    _renderButton = (button, visible) => {
+        let onAllowedToBePressedFunction = visible ? this._onAllowedToBePressed.bind(this) : () => {return false}
         return (
-            <View>
+            <View style={{opacity: visible}}>
                 <EntityControlButton
+                    pressable={visible}
                     entityInfo={button.entityInfo}
                     onButtonActivationChanged={this._onButtonActivationChanged.bind(this)}
                     onEntityControlButtonPressed={this._onEntityManipulated.bind(this)}
-                    onAllowedToBePressedCheck={this._onAllowedToBePressed.bind(this)}
+                    onAllowedToBePressedCheck={onAllowedToBePressedFunction}
                     entityMapper={this.props.entityMapper}
                     currentSelection={this.props.currentSelection}
                     button={button}

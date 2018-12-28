@@ -184,6 +184,10 @@ export default class RichTextEditor extends React.Component {
         return this.props.multiButtonAllowed ? this.props.multiButtonAllowed : false
     };
 
+    _getTagSupport = () => {
+        return this.props.tagSupport !== undefined ? this.props.tagSupport : true
+    };
+
     _renderControlBar = () => {
         if (this.state.showController) {
             let {entityMapper, currentSelection} = this.state;
@@ -195,6 +199,7 @@ export default class RichTextEditor extends React.Component {
                     onEntityManipulated={this.updateRichText.bind(this)}
                     onNeedToShowEditorModal={this.onNeedToShowEditorModal.bind(this)}
                     multiButtonAllowed={this._getCombineTagsStatus()}
+                    tagSupport={this._getTagSupport()}
                 />
             )
         }
