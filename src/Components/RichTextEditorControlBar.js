@@ -100,8 +100,9 @@ export default class RichTextEditorControlBar extends React.Component {
 
     _renderButton = (button, visible) => {
         let onAllowedToBePressedFunction = visible ? this._onAllowedToBePressed.bind(this) : () => {return false}
+        let numberedBoolean = visible ? 1 : 0
         return (
-            <View style={{opacity: visible}}>
+            <View style={{opacity: numberedBoolean}}>
                 <EntityControlButton
                     pressable={visible}
                     entityInfo={button.entityInfo}
