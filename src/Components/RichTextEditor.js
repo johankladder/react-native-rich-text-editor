@@ -262,6 +262,7 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         borderColor: '#8C8D8E',
         padding: 10,
+        textAlignVertical: "top"
     },
     richText: {
         backgroundColor: 'yellow'
