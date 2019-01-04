@@ -1,5 +1,5 @@
 import React from 'react';
-import {DeviceEventEmitter, Keyboard, StyleSheet, TextInput, View} from 'react-native';
+import {DeviceEventEmitter, Keyboard, StyleSheet, TextInput, View, Platform} from 'react-native';
 import EntityMapper from "../Models/EntityMapper";
 import EntityApplier from "../Models/EntityApplier";
 import RichTextEditorControlBar from "./RichTextEditorControlBar";
@@ -24,8 +24,11 @@ export default class RichTextEditor extends React.Component {
     };
 
     componentDidMount() {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardWillHide.bind(this));
+        let keyboardShowKey = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+        let keyboardHideKey = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+        this.keyboardDidShowListener = Keyboard.addListener(keyboardShowKey, this._keyboardWillShow.bind(this));
+        this.keyboardDidHideListener = Keyboard.addListener(keyboardHideKey, this._keyboardWillHide.bind(this));
 
         this.initializeEditor(this.props.initialRichContent)
     };
