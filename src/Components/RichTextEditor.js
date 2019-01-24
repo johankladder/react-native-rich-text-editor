@@ -194,8 +194,10 @@ export default class RichTextEditor extends React.Component {
     _renderControlBar = () => {
         if (this.state.showController) {
             let {entityMapper, currentSelection} = this.state;
+            let {onLinkInput} = this.props;
             return (
                 <RichTextEditorControlBar
+                    onLinkInput={onLinkInput}
                     currentSelection={currentSelection}
                     entityMapper={entityMapper}
                     onContentNeedsToBeAdded={this.addContent.bind(this)}

@@ -23,10 +23,17 @@ export default class RichTextEditorControlBar extends React.Component {
     };
 
     _openLinkCreationField = (possibleEntity) => {
-        this.props.onNeedToShowEditorModal(<EnterLinkModal
-            onSubmit={(options, content) => this._addToMapperCloseAndRefresh(possibleEntity, options, content)}
-            onCancel={() => this._hideEditorModal()}
-        />)
+        if (this.props.onLinkInput) {
+            this.props.onLinkInput(({url, name}) => {
+                let options = {href: url};
+                this._addToMapperCloseAndRefresh(possibleEntity, options, name)
+            })
+        } else {
+            this.props.onNeedToShowEditorModal(<EnterLinkModal
+                onSubmit={(options, content) => this._addToMapperCloseAndRefresh(possibleEntity, options, content)}
+                onCancel={() => this._hideEditorModal()}
+            />)
+        }
     };
 
     _shouldShowTagButtons = () => {
@@ -50,7 +57,7 @@ export default class RichTextEditorControlBar extends React.Component {
     _buttonVisibleAccordingToTagSupport = (button) => {
         let status = this._shouldShowTagButtons();
 
-        if(button instanceof MutableEntityButton) {
+        if (button instanceof MutableEntityButton) {
             return !!status;
         }
         return true;
@@ -69,7 +76,7 @@ export default class RichTextEditorControlBar extends React.Component {
     };
 
     _onAllowedToBePressed = (button) => {
-        if(!this.props.multiButtonAllowed) {
+        if (!this.props.multiButtonAllowed) {
             // Allow to be pushed if already was pushed or if empty:
             return this.state.buttonsActivated.indexOf(button) >= 0 || !this.state.buttonsActivated.length;
         }
@@ -77,7 +84,7 @@ export default class RichTextEditorControlBar extends React.Component {
     };
 
     _onButtonActivationChanged = (button, status) => {
-        if(status) {
+        if (status) {
             this._addButtonToActivatedButtons(button)
         } else {
             this._removeButtonFromActivatedButtons(button)
@@ -99,7 +106,9 @@ export default class RichTextEditorControlBar extends React.Component {
     };
 
     _renderButton = (button, visible) => {
-        let onAllowedToBePressedFunction = visible ? this._onAllowedToBePressed.bind(this) : () => {return false}
+        let onAllowedToBePressedFunction = visible ? this._onAllowedToBePressed.bind(this) : () => {
+            return false
+        }
         let numberedBoolean = visible ? 1 : 0
         return (
             <View style={{opacity: numberedBoolean}}>
