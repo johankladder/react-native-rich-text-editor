@@ -238,7 +238,7 @@ export default class RichTextEditor extends React.Component {
                         placeholder={this._getPlaceHolder()}
                     >
                         {this.state.entitiesConverter.convertToTextComponents(
-                            this.state.plainText, this.state.entityMapper
+                            this.state.plainText, this.state.entityMapper, this.props.textStyle
                         )}
                     </TextInput>
                     {this._renderControlBar()}
