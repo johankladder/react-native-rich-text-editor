@@ -24,11 +24,11 @@ export default class RichTextEditor extends React.Component {
     };
 
     shouldComponentUpdate = (nextProps, nextState) => {
-        if(this.state.showController !== nextState.showController) {
+        if (this.state.showController !== nextState.showController) {
             return true
         }
 
-        if(this.props.initialRichContent !== nextProps.initialRichContent) {
+        if (this.props.initialRichContent !== nextProps.initialRichContent) {
             return true;
         }
 
@@ -222,18 +222,6 @@ export default class RichTextEditor extends React.Component {
         }
     };
 
-    renderRichHtmlText = () => {
-        return (
-            <TextInput
-                multiline={true}
-                editable={false}
-                style={[styles.textView, styles.richText]}
-            >
-                {this.state.richText}
-            </TextInput>
-        )
-    };
-
     /**
      * @override
      */
@@ -242,24 +230,30 @@ export default class RichTextEditor extends React.Component {
             <View>
                 {this.state.toShowEditorModal}
                 <View style={styles.inputArea}>
-                    {/*{this.renderRichHtmlText()}*/}
                     <TextInput
                         autoCorrect={!__DEV__}
                         onSelectionChange={this.onSelectionIndexesChange.bind(this)}
                         multiline={true}
-                        style={[styles.textView, styles.textInput]}
+                        style={[styles.textView, styles.textInput, this.props.textStyle]}
                         onChangeText={this.onChangeText.bind(this)}
                         placeholder={this._getPlaceHolder()}
+                        value={!this.state.entityMapper.length ? this.state.plainText : ''}
                     >
-                        {this.state.entitiesConverter.convertToTextComponents(
-                            this.state.plainText, this.state.entityMapper, this.props.textStyle
-                        )}
+                        {this.renderWithEntityMapper()}
                     </TextInput>
                     {this._renderControlBar()}
                 </View>
 
             </View>
         )
+    }
+
+    renderWithEntityMapper = () => {
+        if (this.state.entityMapper.length) {
+            return this.state.entitiesConverter.convertToTextComponents(
+                this.state.plainText, this.state.entityMapper, this.props.textStyle
+            )
+        }
     }
 }
 
@@ -269,7 +263,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     textView: {
-        backgroundColor: 'yellow',
         flex: 1,
     },
     textInput: {
