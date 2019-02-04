@@ -22,6 +22,10 @@ export default class RichTextEditorControlBar extends React.Component {
         buttonsActivated: []
     };
 
+    shouldComponentUpdate = (nextProps, nextState) => {
+        return nextProps.currentSelection !== this.props.currentSelection;
+    };
+
     _openLinkCreationField = (possibleEntity) => {
         if (this.props.onLinkInput) {
             this.props.onLinkInput(({url, name}) => {

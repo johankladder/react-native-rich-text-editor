@@ -1,5 +1,5 @@
 import React from 'react';
-import {DeviceEventEmitter, Keyboard, StyleSheet, TextInput, View, Platform} from 'react-native';
+import {DeviceEventEmitter, Keyboard, Platform, StyleSheet, TextInput, View} from 'react-native';
 import EntityMapper from "../Models/EntityMapper";
 import EntityApplier from "../Models/EntityApplier";
 import RichTextEditorControlBar from "./RichTextEditorControlBar";
@@ -22,6 +22,18 @@ export default class RichTextEditor extends React.Component {
         showController: false,      // Show controller status -> Only when keyboard is open,
         toShowEditorModal: null,    // A modal window that needs to be shown on top of the editor
     };
+
+    shouldComponentUpdate = (nextProps, nextState) => {
+        if(this.state.showController !== nextState.showController) {
+            return true
+        }
+
+        if(this.props.initialRichContent !== nextProps.initialRichContent) {
+            return true;
+        }
+
+        return this.state.richText !== nextState.richText;
+    }
 
     componentDidMount() {
         let keyboardShowKey = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';

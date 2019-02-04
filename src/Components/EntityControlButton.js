@@ -24,6 +24,14 @@ export default class EntityControlButton extends React.Component {
         updateModeEntities: [],
     };
 
+    shouldComponentUpdate = (nextProps, nextState) => {
+        if (nextState.insertionMode !== this.state.insertionMode) {
+            return true;
+        }
+
+        return nextState.updateMode !== this.state.updateMode;
+    };
+
     componentDidMount() {
         this.selectionChangedEvent = DeviceEventEmitter.addListener('selectionChanged', this.onCurrentSelectionChange.bind(this))
         this.resetModesEvent = DeviceEventEmitter.addListener('resetModes', this._resetModes.bind(this))
