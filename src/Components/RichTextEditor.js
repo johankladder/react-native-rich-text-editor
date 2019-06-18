@@ -94,7 +94,7 @@ export default class RichTextEditor extends React.Component {
             richText: this.state.entityApplier.apply(
                 this.state.plainText, this.state.entityMapper
             )
-        })
+        }, () => this.publishText(this.state.plainText, this.state.richText))
     };
 
     /**
